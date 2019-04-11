@@ -1,7 +1,7 @@
 {
-  "name": "carona-bot",
+  "name": "secret-santa-bot",
   "version": "1.0.0",
-  "description": "Telegram bot for sharing rides.",
+  "description": "Telegram bot to help with secret santa.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

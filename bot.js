@@ -9,9 +9,10 @@ let bot
 if (process.env.NODE_ENV === 'production') {
   bot = new Bot(token)
   bot.setWebHook(process.env.HEROKU_URL + bot.token)
-}
-else {
-  bot = new Bot(token, { polling: true })
+} else {
+  bot = new Bot(token, {
+    polling: true
+  })
 }
 
 console.log('Bot server started in the ' + process.env.NODE_ENV + ' mode')
@@ -33,11 +34,26 @@ bot.on('text', (msg) => {
     case '/menu':
       // Keyboard is an array of array of buttons, resulting in rows and columns.
       let keyboard = [
-        [{ "text": 'Criar Amigo Oculto', "callback_data": '/criar' }]
+        [{
+          "text": 'Criar Amigo Oculto',
+          "callback_data": '/criar'
+        }]
       ]
       bot.sendMessage(chatId, 'Menu com botões...', {
         'parse_mode': 'Markdown',
-        'reply_markup': { 'inline_keyboard': keyboard }
+        'reply_markup': {
+          'inline_keyboard': keyboard
+        }
+      })
+      break
+
+    case '/foto':
+      // Just in case...
+      console.log('Foto')
+      bot.getUserProfilePhotos(user.id, {'limit': 1}).then(function(result) {
+        console.log(result)
+      }, function(err) {
+        console.log(err)
       })
       break
 
