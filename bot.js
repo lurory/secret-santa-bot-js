@@ -30,13 +30,32 @@ bot.on('text', (msg) => {
     command = command.split('@')[0]
 
   switch (command) {
+    case '/menu':
+      // Keyboard is an array of array of buttons, resulting in rows and columns.
+      let keyboard = [
+        [{ "text": 'Criar Amigo Oculto', "callback_data": '/criar' }]
+      ]
+      bot.sendMessage(chatId, 'Menu com botões...', {
+        'parse_mode': 'Markdown',
+        'reply_markup': { 'inline_keyboard': keyboard }
+      })
+      break
+
     case '/help':
     case '/ajuda':
+      bot.sendMessage(chatId, Utils.getHelpMessage(), {
+        'parse_mode': 'Markdown'
+      })
       break
 
     default:
       bot.sendMessage(chatId, 'Desculpe, não entendi. Digite /ajuda para ver a lista de comandos.')
   }
+})
+
+bot.on('callback_query', (query) => {
+  let chatId = query.message.chat.id
+  bot.sendMessage(chatId, "Received callback query \"" + query.data + "\" from user " + query.from.first_name)
 })
 
 bot.on('polling_error', (error) => {
