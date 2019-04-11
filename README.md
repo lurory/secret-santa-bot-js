@@ -1,4 +1,4 @@
-# Carona Bot
+# Secret Santa Bot
 Bot for sharing rides.
 
 ## Trying bot locally
