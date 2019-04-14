@@ -35,7 +35,7 @@ bot.on("text", msg => {
   switch (command) {
     case "/menu":
       // Keyboard is an array of array of buttons, resulting in rows and columns.
-      let keyboard = [
+      let menuKeyboard = [
         [
           {
             text: "Criar Amigo Oculto",
@@ -46,7 +46,7 @@ bot.on("text", msg => {
       bot.sendMessage(chatId, "Menu com botões...", {
         parse_mode: "Markdown",
         reply_markup: {
-          inline_keyboard: keyboard
+          inline_keyboard: menuKeyboard
         }
       })
       break
@@ -55,17 +55,17 @@ bot.on("text", msg => {
       // Just in case...
       console.log("Foto")
       bot.getUserProfilePhotos(user.id, { limit: 1 }).then(
-        function(result) {
+        function (result) {
           console.log(result)
           if (result.total_count === 0) return
 
           const file_id = result.photos[0][0].file_id
           bot.getFile(file_id).then(
-            function(file) {
+            function (file) {
               const url = "https://api.telegram.org/file/bot" + token + "/" + file.file_path
               bot.sendMessage(chatId, url)
             },
-            function(err) {
+            function (err) {
               console.log(err)
             }
           )
@@ -75,7 +75,7 @@ bot.on("text", msg => {
           //   bot.sendPhoto(chatId, photo.file_id)
           // }
         },
-        function(err) {
+        function (err) {
           console.log(err)
         }
       )
@@ -186,7 +186,34 @@ bot.on("text", msg => {
 
     case "/sortear":
       const raffleResult = secretSantaManager.raffle(chatId, user.id)
-      console.log(raffleResult)
+      if (raffleResult === -3)
+        bot.sendMessage(chatId, "Não há um amigo oculto para esse grupo. Digite /criar para criar um sorteio.", {
+          reply_to_message_id: msg.message_id
+        })
+      else if (raffleResult === -2)
+        bot.sendMessage(chatId, "Você não tem permissão para remover o amigo oculto. Caso queira sair do sorteio, digite /sair.", {
+          reply_to_message_id: msg.message_id
+        })
+      else if (raffleResult === -1)
+        bot.sendMessage(chatId, "Não é possível sortear porque há menos de 2 pessoas participando.", {
+          reply_to_message_id: msg.message_id
+        })
+      else
+      {
+        let revealKeyboard = [
+          [
+            {
+              text: "Clique para descobrir seu amigo oculto!",
+              switch_inline_query_current_chat: chatId
+            }
+          ]
+        ]
+        bot.sendMessage(chatId, "O amigo oculto foi sorteado! Cliquem no botão abaixo para descobrir quem vocês tiraram!", {
+          reply_markup: {
+            inline_keyboard: revealKeyboard
+          }
+        })
+      }
       break
 
     case "/help":
@@ -234,7 +261,7 @@ bot.on("inline_query", msg => {
       thumb_url: "https://submeg.files.wordpress.com/2011/12/work-in-progress22.jpg?w=620&h=521&crop=1"
     }
   ]
-  bot.answerInlineQuery(msg.id, JSON.stringify(results), {cache_time: 0}).then(() => {})
+  bot.answerInlineQuery(msg.id, JSON.stringify(results), { cache_time: 0 }).then(() => { })
 })
 
 bot.on("polling_error", error => {
